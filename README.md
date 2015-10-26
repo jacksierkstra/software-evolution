@@ -1,2 +1,2 @@
-# software-evolution
-The repo for Alex van Manen and me for the course: Software Evolution.
+# Software Evolution
+This repo is going to contain code for the course Software Evolution.
