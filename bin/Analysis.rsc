@@ -25,3 +25,13 @@ public int countLines(str fileType, M3 projectModel) {
 		numberOfLines += size(readFileLines(f));
 	return numberOfLines;
 }
+
+// Actual output :
+// rascal>analyzeProject();
+// Total lines of code in Java files for project [hellowereld] is: 
+// 9
+// Total lines of code in Java files for project [hsqldb] is: 
+// 298084
+// -----------------------------------------------------------------
+// Please note that the analysis for the hsqldb project is not
+// only done on Java files, but on all types of files.
