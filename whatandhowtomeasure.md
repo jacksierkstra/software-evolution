@@ -18,6 +18,9 @@ Define a good strategy of calculating those 6 lines of duplicated code across th
 Nagedacht over code duplication algoritme
 Ook heb ik nagedacht over de duplication. Dit is volgens mij heel erg resource intensive. Hiervoor moeten we volgens mij elke regel opslaan in een aparte lijst (hashtable bijvoorbeeld) en dan bij elke regel na gaan of deze regel al in deze lijst staat. Als dezelfde regel al in de lijst staat, dan moeten we dit in een aparte lijst met tuples zetten met daarbij welke regelnummers in welke bestanden met elkaar overeen komen. Daarna moet het algoritme kijken of de volgende regelnummer in het ene bestand en de volgende regelnummer in het andere bestand ook identiek zijn. Het klinkt misschien nog een beetje vaag, maar ik zal het maandag uitleggen. Misschien heb jij een beter idee, dan hoor ik het graag.
 
+##### Resources
+http://www.bauhaus-stuttgart.de/clones/CloneDR_ICSM98_IEEE_Copyright.pdf
+
 ### Unit Size
 Lines of code per method.
 
