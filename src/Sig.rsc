@@ -94,7 +94,7 @@ public str complexityPerUnitRating(list[int] unitSizeList, str language){
 	percCPUComplex = (toReal(complex) / numOfUnits) * 100;
 	percCPUToComplex = (toReal(toComplex) / numOfUnits) * 100;
 	
-
+	//TODO: Check if this is right. 
 	if(percCPUToComplex >= 5 || percCPUComplex >= 15 || percCPUSimple >= 50){
 		result = ratingPlus;
 	} else if(percCPUToComplex >= 0 || percCPUComplex >= 10 || percCPUSimple >= 40){

@@ -23,10 +23,10 @@ public void main(){
 	
 	
 	
-	str compPerUnit = complexityPerUnitRating(getUnitSizesInProject(model), language);
+	str unitSize = complexityPerUnitRating(getUnitSizesInProject(model), language);
 	printComplexityPerUnitInfo();
 	int duplication = 0;
-	int unitSize = 3;
+	str compPerUnit = "?";
 	int unitTesting = 0;
 	
 	
@@ -54,13 +54,13 @@ public void showReport(){
 	render(b2);
 }
 
-public void showTerminalReport(str volume, str compPerUnit, int duplication, int unitSize, int unitTesting){
-	str analysability = "++";
-	str changebillity = "--";
-	str stability = "o";
-	str testability = "o";
+public void showTerminalReport(str volume, str compPerUnit, int duplication, str unitSize, int unitTesting){
+	str analysability = "?";
+	str changebillity = "?";
+	str stability = "?";
+	str testability = "?";
 	println("		Volume	Complexity per unit	Duplication	Unit Size	Unit testing");
-	println("		  <volume>		<compPerUnit>		   <scoreToString(duplication)>		    <scoreToString(unitSize)>		     <scoreToString(unitTesting)>");
+	println("		  <volume>		<compPerUnit>		   <scoreToString(duplication)>		    <unitSize>		     <scoreToString(unitTesting)>");
 	println("Analysability	  X 		  	  	   X		    X		     X			<analysability>");
 	println("Changeability	    		X 	  	   X		     		      			<changebillity>");
 	println("Stability	    		  	  	    		     		     X			<stability>");

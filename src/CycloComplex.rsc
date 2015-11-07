@@ -60,14 +60,30 @@ public void calcCyclomaticComplexity(Declaration ast){
 public int countIfNesting(Statement stat){
 	top-down-break visit(stat){
 		case \if(_, Statement thenBranch):{
-			//println("called 1");
+			println("called 1");
 			return 1 + countIfNesting(thenBranch);
 		}
 		case \if(_, Statement thenBranch, Statement elseBranch):{
-			//println("called 2");
+			println("called 2");
 			return 1 + max(countIfNesting(thenBranch),countIfNesting(elseBranch));
 		}
+		//case \foreach(Declaration parameter, Expression collection, Statement body):{
+		//	println("called 3");
+		//	return 1 + countIfNesting(body);
+		//}
+		//case \for(list[Expression] initializers, Expression condition, list[Expression] updaters, Statement body):{
+		//	println("called 4");
+		//	return 1 + countIfNesting(body);
+		//}
+		//case \for(list[Expression] initializers, list[Expression] updaters, Statement body):{
+		//	println("called 5");
+		//	return 1 + countIfNesting(body);
+		//}
+		
+	 
 	}
+	
+	
 	return 0;
 }
 
