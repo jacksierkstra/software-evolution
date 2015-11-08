@@ -12,9 +12,9 @@ import Prelude;
 
 public void analyzeProject() {
 	
-	M3 project1 = createM3FromEclipseProject(|project://example-project|);
+	M3 project1 = createM3FromEclipseProject(|project://hsqldb|);
 	list[str] allLinesOfProject = getAllLinesOfProject("Java", project1);
-	list[Declaration] asts = getAllASTsOfProject(project1);
+	//list[Declaration] asts = getAllASTsOfProject(project1);
 
 	/* 
 	Code to go just one file instead of alle
@@ -23,8 +23,8 @@ public void analyzeProject() {
 	printVisitInfo(ast2);
 	*/
 	
-	printVisitInfo(asts);
-
+	//printVisitInfo(asts);
+	println(size(allLinesOfProject));
 
 	
 	
@@ -114,7 +114,7 @@ public list[str] removeCommentAndBlanks(list[str] lines ){
 		
 		//TODO: This doesn't work yet
 				/* 
-		 		int b;
+				hier vertel ik iets
 		 		*/
 		if(trim(line) != "" && !startsWith(trim(line),"/") && !startsWith(trim(line),"*"))
 			result = result + line;
