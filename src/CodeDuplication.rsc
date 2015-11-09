@@ -13,26 +13,77 @@ import LineCounter;
 
 int threshold = 6;
 
+
 public void main() {
 
 	//loc l = |project://smallsql|;
 	//loc l = |project://hellowereld|;
-	//loc l = |project://hsqldb|;
-	set[Declaration] ast = iterateThroughProject();
-	checkDuplicatedCode(ast);
+	loc l = |project://hsqldb|;
 	
-	//M3 project1 = createM3FromEclipseProject(|project://hellowereld|);
-	//list[str] allLinesOfProject = getAllLinesOfProject(project1);
-	//checkDuplicatedCodeMap(allLinesOfProject);
+	iterateThroughProject(createM3FromEclipseProject(l));
 	
-	//iprintln();
 }
 
-public set[Declaration] iterateThroughProject() {
-	set[Declaration] asts = {};
-	M3 project1 = createM3FromEclipseProject(|project://hsqldb|);
-	for (file <- files(project1))
-		return asts += createAstFromFile(file, true);
+public void iterateThroughProject(M3 project) {
+	
+	set[Declaration] declarations = { createAstFromFile(c,true) | c <- files(project)};
+	
+	map[Statement,map[str, list[int]]] dups = ();
+	
+	for (declaration <- declarations) {
+		map[Statement,map[str, list[int]]] duplicate = codeDuplicateMap(declaration);
+		for(dup <- duplicate) {
+			if(dup in dups) {
+				dups[dup] = dups[dup] + duplicate[dup];
+			} else {
+				dups[dup] = duplicate[dup];
+			}
+		}
+	}
+	
+	for(dup <- dups) {
+	
+		if(size(dups[dup]) > 1) {
+			
+			for (entry <- dups[dup]) {
+			
+				int fromLine = dups[dup][entry][0];
+				int toLine = dups[dup][entry][1];
+				
+				if( (toLine - fromLine) >= threshold) {
+					
+					iprintln(entry);
+					
+				}
+				
+			}
+			
+		} 
+	}
+		
+}
+
+public map[Statement,map[str, list[int]]] codeDuplicateMap(Declaration decl) {
+	
+	map[Statement,map[str, list[int]]] duplications = ();
+	
+	visit(decl) {
+	
+		case m : \method(Type \return,str name,list[Declaration] parameters, list[Expression] exceptions ,Statement impl): {
+			
+			loc sourceFile = impl@src;
+			
+			if(impl in duplications) {
+				duplications[impl] += (name: [sourceFile.begin.line, sourceFile.end.line]);
+			} else {
+				duplications[impl] = (name: [sourceFile.begin.line, sourceFile.end.line]);
+			}
+			
+		}
+		
+	}
+	
+	return duplications;
 }
 
 public void checkDuplicatedCode(set[Declaration] decls) {
