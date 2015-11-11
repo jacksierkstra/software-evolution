@@ -21,14 +21,13 @@ public void main() {
 	loc l = |project://hsqldb|;
 
 	M3 project = createM3FromEclipseProject(l);
-	set[Declaration] declarations = { createAstFromFile(file, collectBindings) |  file <- files(project) };
-
-	iprintln(declarations);
-
+	iterateThroughProject(project);
+	
 }
 
 public void iterateThroughProject(M3 project) {
-
+	
+	//set[Declaration] declarations = { createAstFromFile(file, collectBindings) |  file <- files(project) };
 
 	map[Statement,map[str, list[int]]] dups = ();
 
