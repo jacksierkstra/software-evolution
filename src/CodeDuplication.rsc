@@ -53,7 +53,7 @@ public void printInformationAboutDuplicates(map[Statement,map[str, list[int]]] d
 	
 	for(dup <- dups) {
 
-		if(size(dups[dup]) > 1) {
+		if(hasMultipleDuplicateParts(dups[dup])) {
 
 			for (entry <- dups[dup]) {
 
@@ -71,6 +71,10 @@ public void printInformationAboutDuplicates(map[Statement,map[str, list[int]]] d
 		}
 	}
 	
+}
+
+public bool hasMultipleDuplicateParts(map[str, list[int]] entry) {
+	return (size(entry) > 1);
 }
 
 public map[Statement,map[str, list[int]]] codeDuplicateMap(Declaration decl) {
