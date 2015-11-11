@@ -45,6 +45,12 @@ public void iterateThroughProject(M3 project) {
 
     }
 
+    printInformationAboutDuplicates(dups);
+
+}
+
+public void printInformationAboutDuplicates(map[Statement,map[str, list[int]]] dups) {
+	
 	for(dup <- dups) {
 
 		if(size(dups[dup]) > 1) {
@@ -64,7 +70,7 @@ public void iterateThroughProject(M3 project) {
 
 		}
 	}
-
+	
 }
 
 public map[Statement,map[str, list[int]]] codeDuplicateMap(Declaration decl) {
