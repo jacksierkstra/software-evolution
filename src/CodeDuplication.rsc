@@ -14,18 +14,21 @@ import LineCounter;
 int threshold = 6;
 bool collectBindings = false;
 
-public void main() {
-
-	//loc l = |project://smallsql|;
-	loc l = |project://hellowereld|;
-	//loc l = |project://hsqldb|;
-
-	M3 project = createM3FromEclipseProject(l);
+/*
+ * creates a M3 model from the given project location.
+ * then it calls subsequent methods in this file to 
+ * gather information about that project.
+*/
+public void checkDuplicates(loc projectLocation) {
+	M3 project = createM3FromEclipseProject(projectLocation);
 	iterateThroughProject(project);
-	
 }
 
-public void iterateThroughProject(M3 project) {
+/*
+ * Goes over all the files in the M3 model and creates Abstract Syntax Trees from them.
+ * Then it gives the results over to the next methods which will check for duplicates.
+*/
+private void iterateThroughProject(M3 project) {
 	
 	set[Declaration] declarations = { createAstFromFile(file, collectBindings) |  file <- files(project) };
 	
@@ -51,32 +54,46 @@ public void iterateThroughProject(M3 project) {
 
 }
 
-public void checkStatementOccursTwice(map[Statement,map[str, list[int]]] dups) {
-	
+/*
+ * We only do something with the result if the implementation key occurs more than
+ * once. The reason is that if it does, it is a duplicate.
+*/
+private void checkStatementOccursTwice(map[Statement,map[str, list[int]]] dups) {
 	for(dup <- dups) {
-		println();
-		println("The following methods are duplicates:");
 		if (isDuplicate(dups[dup])) 
 			printInfoAboutDuplicates(dups[dup]);
 	}
-	
 }
 
-public void printInfoAboutDuplicates(map[str,list[int]] entries) {
+/*
+ * Goes over the gathered map and prints info about the entries that
+ * are compliant with the given threshold.
+*/
+private void printInfoAboutDuplicates(map[str,list[int]] entries) {
 	
+	println();
+	println("The following methods are duplicates:");
 	for (entry <- entries) {
 		if( (getToLine(entries[entry]) - getFromLine(entries[entry])) >= threshold) {
 			iprintln(entry);
 		}
-	}
+	}	
 	
 }
 
-public int getFromLine(list[int] lineList) {
+/*
+ * this is kind of a dirty way to get the from line
+ * in the provided list, but I don't really care.
+*/
+private int getFromLine(list[int] lineList) {
 	return lineList[0];
 }
 
-public int getToLine(list[int] lineList) {
+/*
+ * this is kind of a dirty way to get the to line
+ * in the provided list, but I don't really care.
+*/
+private int getToLine(list[int] lineList) {
 	return lineList[1];
 }
 
@@ -85,42 +102,31 @@ public int getToLine(list[int] lineList) {
  * Meaning: if the Statement occurs in the map, and it has
  * more than one entry, it is a duplicate.
  */
-public bool isDuplicate(map[str, list[int]] entry) {
+private bool isDuplicate(map[str, list[int]] entry) {
 	return (size(entry) > 1);
 }
 
-public map[Statement,map[str, list[int]]] codeDuplicateMap(Declaration decl) {
+/*
+ * Goes over the declaration and add each implementation of a method and 
+ * a constructor to a map. The implementation is the key of the map.
+*/
+private map[Statement,map[str, list[int]]] codeDuplicateMap(Declaration decl) {
 
 	map[Statement,map[str, list[int]]] duplications = ();
 	
 	visit(decl) {
 
-		//\enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
-	    //\enumConstant(str name, list[Expression] arguments, Declaration class)
-	    //\enumConstant(str name, list[Expression] arguments)
-	    //\class(str name, list[Type] extends, list[Type] implements, list[Declaration] body)
-	    //\class(list[Declaration] body)
-	    //\interface(str name, list[Type] extends, list[Type] implements, list[Declaration] body)
-	    //\field(Type \type, list[Expression] fragments)
-	    //\initializer(Statement initializerBody)
-	    //\method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl)
-	    //\method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions)
-	    //\constructor(str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl)
-	    //\import(str name)
-	    //\package(str name)
-	    //\package(Declaration parentPackage, str name)
-	    //\variables(Type \type, list[Expression] \fragments)
-	    //\typeParameter(str name, list[Type] extendsList)
-	    //\annotationType(str name, list[Declaration] body)
-	    //\annotationTypeMember(Type \type, str name)
-	    //\annotationTypeMember(Type \type, str name, Expression defaultBlock)
-	    //// initializers missing in parameter, is it needed in vararg?
-	    //\parameter(Type \type, str name, int extraDimensions)
-	    //\vararg(Type \type, str name)
+		case c : \constructor(str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl):{
+			
+			loc sourceFile = impl@src;
 
-	    // It only checks methods right now. If I add only the contstructor
-	    // part, it results in a Stackoverflow error.
-
+			if(impl in duplications) {
+				duplications[impl] += ( "<sourceFile> : <name>" : [sourceFile.begin.line, sourceFile.end.line]);
+			} else {
+				duplications[impl] = ("<sourceFile> : <name>": [sourceFile.begin.line, sourceFile.end.line]);
+			}
+			
+		}
 		case m : \method(Type \return,str name,list[Declaration] parameters, list[Expression] exceptions ,Statement impl): {
 
 			loc sourceFile = impl@src;

@@ -6,8 +6,37 @@ import lang::java::m3::AST;
 import IO;
 import List;
 import Prelude;
+import CodeDuplication;
 
 
+/*
+ * Please put all functions that check one metric into this method.
+ * I don't know which of the rest of the functions in this file are
+ * are crap, so we must go over that saturday.
+ */
+public void main() {
+	
+	//loc l = |project://smallsql|;
+	loc l = |project://hellowereld|;
+	//loc l = |project://hsqldb|;
+	
+	// This method will run an analysis on the whole project
+	// given above and check for code duplication.
+	checkDuplicates(l);
+	
+	// This method will run an analysis on the whole project
+	// given above and check for unit size.
+	//checkUnitSize(l);
+	
+	// This method will run an analysis on the whole project
+	// given above and check for cyclomatic complexity.
+	//checkCyclomaticComplexity(l);
+	
+	// This method will run an analysis on the whole project
+	// given above and check for lines of code.
+	//checkLinesOfCode(l);
+	
+}
 
 
 public void analyzeProject() {
