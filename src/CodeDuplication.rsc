@@ -54,6 +54,8 @@ public void iterateThroughProject(M3 project) {
 public void checkStatementOccursTwice(map[Statement,map[str, list[int]]] dups) {
 	
 	for(dup <- dups) {
+		println();
+		println("The following methods are duplicates:");
 		if (isDuplicate(dups[dup])) 
 			printInfoAboutDuplicates(dups[dup]);
 	}
@@ -78,6 +80,7 @@ public int getToLine(list[int] lineList) {
 	return lineList[1];
 }
 
+
 /**
  * Meaning: if the Statement occurs in the map, and it has
  * more than one entry, it is a duplicate.
@@ -89,7 +92,7 @@ public bool isDuplicate(map[str, list[int]] entry) {
 public map[Statement,map[str, list[int]]] codeDuplicateMap(Declaration decl) {
 
 	map[Statement,map[str, list[int]]] duplications = ();
-
+	
 	visit(decl) {
 
 		//\enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
@@ -123,9 +126,9 @@ public map[Statement,map[str, list[int]]] codeDuplicateMap(Declaration decl) {
 			loc sourceFile = impl@src;
 
 			if(impl in duplications) {
-				duplications[impl] += (name: [sourceFile.begin.line, sourceFile.end.line]);
+				duplications[impl] += ( "<sourceFile> : <name>" : [sourceFile.begin.line, sourceFile.end.line]);
 			} else {
-				duplications[impl] = (name: [sourceFile.begin.line, sourceFile.end.line]);
+				duplications[impl] = ("<sourceFile> : <name>": [sourceFile.begin.line, sourceFile.end.line]);
 			}
 
 		}
