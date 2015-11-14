@@ -14,15 +14,19 @@ import CodeDuplication;
  * I don't know which of the rest of the functions in this file are
  * are crap, so we must go over that saturday.
  */
-public void main() {
+public void main2() {
 	
-	//loc l = |project://smallsql|;
-	loc l = |project://hellowereld|;
+	
+	logging = true;
+	loc l = |project://example-project|;
+	//loc l = |project://smallsql0.21_src/|;
+	//loc l = |project://hellowereld|;
 	//loc l = |project://hsqldb|;
 	
 	// This method will run an analysis on the whole project
 	// given above and check for code duplication.
 	checkDuplicates(l);
+	println(totalNumOfLinesDuplicated);
 	
 	// This method will run an analysis on the whole project
 	// given above and check for unit size.

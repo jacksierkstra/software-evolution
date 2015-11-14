@@ -13,6 +13,8 @@ import LineCounter;
 
 int threshold = 6;
 bool collectBindings = false;
+public int totalNumOfLinesDuplicated = 0;
+public bool logging = false; 
 
 /*
  * creates a M3 model from the given project location.
@@ -21,6 +23,14 @@ bool collectBindings = false;
 */
 public void checkDuplicates(loc projectLocation) {
 	M3 project = createM3FromEclipseProject(projectLocation);
+	iterateThroughProject(project);
+}
+
+public void reset(){
+	totalNumOfLinesDuplicated = 0;
+}
+
+public void checkDuplicates(M3 project) {
 	iterateThroughProject(project);
 }
 
@@ -71,14 +81,20 @@ private void checkStatementOccursTwice(map[Statement,map[str, list[int]]] dups) 
 */
 private void printInfoAboutDuplicates(map[str,list[int]] entries) {
 	
-	println();
-	println("The following methods are duplicates:");
+	if(logging) {
+		println();
+	}
 	for (entry <- entries) {
-		if( (getToLine(entries[entry]) - getFromLine(entries[entry])) >= threshold) {
-			iprintln(entry);
+	int numOfLinesDuplicated = getToLine(entries[entry]) - getFromLine(entries[entry]);
+		if( numOfLinesDuplicated >= threshold) {
+			if(logging) {
+				println("The following methods are duplicates:");
+				iprintln(entry);
+				println("duplicate number of line <numOfLinesDuplicated>");
+			}
+			totalNumOfLinesDuplicated = numOfLinesDuplicated + totalNumOfLinesDuplicated;
 		}
-	}	
-	
+	}		
 }
 
 /*

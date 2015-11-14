@@ -1,0 +1,215 @@
+module Analysis
+
+import lang::java::m3::Core;
+import lang::java::jdt::m3::Core;
+import lang::java::m3::AST;
+import IO;
+import List;
+import Prelude;
+import util::LOC;
+
+//import analysis::graphs::LabeledGraph;
+//Graph[int] a = {<1,10>, <2,20>, <3,30>};
+
+
+public str x = "(?m)XX$";
+public str x1 = "XX";
+public str xa = "/*";
+public str x2 = "*/";
+public str text = "lineoneXX\nlinetwo";
+public str text2 = "
+					/*aa*/
+					XXaaXX
+					bbbbbXX
+					alex
+					a c a adfadsfds    c
+					afdsfds
+					*/ alex
+					/////a
+					/*
+					affads
+					*/
+					c
+					boe
+					ja a;ex
+					dfsafdsa
+					aa";
+public str a = "/a";						
+public str c = "c";				
+public str text3 = "a \n c \n  a    c";
+public int regex1 = (0 | it + 1 | /(?m)<x2>$/ := text2);
+public int regex2 = (0 | it + 1 | /XX(?m)<x2>$/ := text2);
+public int regex3 = (0 | it + 1 | /a*c/s := "a\nc \n a    dafd c");
+public int regex4 = (0 | it + 1 | /<a>*<c>/s := text2);
+//            /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/";
+
+public void analyzeProject() {
+	
+	M3 model = createM3FromEclipseProject(|project://example-project|);
+	println(classes(model));
+	list[str] allLinesOfProject = getAllLinesOfProject("Java", model);
+	list[Declaration] asts = getAllASTsOfProject(model);
+
+
+	//for(c <- classes(model)){
+	//	 println("<c>: <size(methods(model, c))>");
+	//}
+
+
+	/* 
+	Code to go just one file instead of alle
+	Declaration ast2 = createAstFromFile(toList(files(project1))[2], true);
+	println(ast2);
+	printVisitInfo(ast2);
+	*/
+	
+	println("--aaa-----");
+	set[loc] myMethods = methods(model);
+	for(m <- myMethods){
+		println(m);
+	}
+	
+	
+	
+	str methodSrc = readFile(|java+method:///HelloWorld/main(java.lang.String%5B%5D)|);
+	
+	
+	//    /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/
+	b = (0 | it + 1 | /\n/ := methodSrc);
+	
+	println("number of methods : <size(methodSrc)>");
+	
+	println(" HelloWorld.main method has the number of lines: <b>");
+	list[str] lines = split("\n", methodSrc);
+	println(size(removeCommentAndBlanks(lines)));
+	for (l <- removeCommentAndBlanks(lines)){
+		println(l);
+	}
+	
+	
+	println("---aaa----");
+	
+	
+	printVisitInfo(asts);
+
+	
+	Declaration ast = createAstFromFile(toList(files(model))[2], true);
+	//println(ast);
+	//countSLOC(ast);
+	//println("line count <loc>");
+	
+	
+	
+	
+	list[str] adjustedLines = removeCommentAndBlanks(allLinesOfProject);
+	//println(adjustedLines);
+	println("Total lines of code in Java files for project [example-project] is: ");
+	println(countLines(adjustedLines));
+	
+	
+	
+	
+	/*M3 project2 = createM3FromEclipseProject(|project://hsqldb|);	
+	println("Total lines of code in Java files for project [hsqldb] is: ");
+	println(countLines("Java", project2));*/
+	
+}
+
+
+	/**
+	 * Function returns the lines of code. This function doesn't count the comment and blank lines. 
+	 * 
+	 * @param location 	e.g.: |java+method:///HelloWorld/main(java.lang.String%5B%5D)|
+	 * @return the lines of code (LOC)
+	 */
+	public int countNumbersMethod(loc location){
+		str methodSrc = readFile(location);
+		list[str] lines = split("\n", methodSrc);
+		return size(removeCommentAndBlanks(lines));
+	}
+	
+
+public void printVisitInfo(list[Declaration] asts){
+	for(ast <- asts) {
+		printVisitInfo(ast);
+	}	
+}
+
+public void printVisitInfo(Declaration ast){
+	iprintln("--------------------------------");
+	iprintln("Start with visiting a new file: ");
+	visit(ast){
+		
+
+		case \class(name, extends, implements, body):{
+			iprintln("class name: "+ name);
+		}
+		
+		case \interface(name, extends, implements, body):{
+			iprintln("interface name: "+ name);
+		}
+		
+		case \import(i): {
+			iprintln("Found an import: "+ i);
+		}
+		
+		case \method(u, name, param, exceptions, impl): {			
+			visit(impl){
+				case \block(lijst): {
+					int numStatements = size(lijst);
+					println("The method <name> has <numStatements> statement(s)");
+				}	
+			}
+			
+		}
+		
+	
+	}
+}
+
+
+public list[Declaration] getAllASTsOfProject(M3 projectModel) {
+	list[Declaration] asts = [];
+	for(f <- files(projectModel)) {
+		asts =  asts + createAstFromFile(f,true);
+	}	
+	return asts;
+}
+
+public list[str] getAllLinesOfProject(str fileType, M3 projectModel) {
+	list[str] lines = [];
+	for(f <- files(projectModel))
+		lines += readFileLines(f);
+	return lines;		
+}
+
+public list[str] getAllLinesOfProject(str fileType, M3 projectModel) {
+	list[str] lines = [];
+	for(f <- files(projectModel))
+		lines += readFileLines(f);
+	return lines;		
+}
+
+public str removeComments(str text){
+	
+	
+	//      /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/
+	
+}
+
+
+/*
+  The following method will count the lines for a whole project.
+  TODO: the type of files still need to be defined.
+*/
+public int countLines(list[str] lines) {
+	return size(lines);
+}
+
+/*
+  The following method will count comments in a given project.
+  This includes comment blocks and commentedLines. 
+*/
+public int countCommentedLines(list[str] lines) {
+	return 0;
+}
